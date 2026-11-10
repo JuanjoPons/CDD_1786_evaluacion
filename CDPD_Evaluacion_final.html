@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluación final · MPCDPD 1786</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f2a5c; --ink-2:#33466e; --muted:#5a6a8a; --paper:#eef3fb; --surface:#ffffff; --line:#d6e0f2; --line-2:#e6ecf7;
+  --accent:#2160e0; --accent-ink:#163b8f; --accent-bg:#e8efff;
+  --ok:#1b7343; --ok-bg:#e6f4ec; --ko:#b42318; --ko-bg:#fdecea; --warn:#8a5a00; --warn-bg:#fff4dc;
+  --focus:#ff8a00; --r-s:10px; --r-m:16px;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-head:"Barlow Condensed","Avenir Next Condensed","Arial Narrow",sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.6 var(--f-body)}
+h1,h2,h3{font-family:var(--f-head);font-weight:600;line-height:1.15;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* cabecera: misma placa azul que las webs del módulo */
+.top{background:linear-gradient(120deg,#1747c4 0%,#2563eb 55%,#3f7ef0 100%);color:#fff}
+.top-in{max-width:880px;margin:0 auto;padding:24px 16px 28px;display:grid;gap:8px}
+.top small{color:#dbe7ff;font-size:.9rem}
+.top h1{font-size:clamp(1.9rem,4.4vw,2.6rem)}
+.top p{margin:0;color:#e8efff;max-width:62ch}
+
+.wrap{max-width:880px;margin:0 auto;padding:24px 16px 120px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:20px 24px;margin-bottom:16px}
+.rules{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:20px 1fr;gap:10px;color:var(--ink-2)}
+.rules svg{width:20px;height:20px;color:var(--accent);margin-top:3px}
+.form{display:grid;grid-template-columns:1fr 200px;gap:16px;margin-top:16px}
+.field label{display:block;font-weight:700;font-size:.95rem;margin-bottom:4px}
+.field input{width:100%;border:1px solid var(--line);border-radius:var(--r-s);padding:.55rem .75rem;background:#fff}
+.field input:focus{border-color:var(--accent)}
+.req{color:var(--ko)}
+
+/* preguntas */
+.q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:20px 24px;margin:0 0 12px;scroll-margin-top:96px}
+.q legend{display:contents}
+.q .qn{font-family:var(--f-head);font-size:1.05rem;font-weight:600;color:var(--accent-ink);margin-bottom:4px;display:block}
+.q .qt{font-weight:700;margin:0 0 12px;display:block}
+.opt{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line-2);border-radius:var(--r-s);margin-top:8px;cursor:pointer;transition:background-color .15s var(--ease),border-color .15s var(--ease)}
+.opt:hover{background:var(--accent-bg)}
+.opt input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-bg)}
+.q.pending-mark{border-color:var(--warn);box-shadow:0 0 0 3px var(--warn-bg)}
+
+/* barra inferior fija */
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(6px)}
+.bar-in{max-width:880px;margin:0 auto;padding:12px 16px;display:flex;gap:16px;align-items:center;justify-content:space-between}
+.count{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.count strong{color:var(--ink)}
+.meter{height:6px;background:var(--line-2);border-radius:3px;overflow:hidden;margin-top:6px;width:min(320px,48vw)}
+.meter i{display:block;height:100%;background:var(--accent);transition:width .25s var(--ease)}
+
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:.6rem 1.2rem;font-weight:700;cursor:pointer;transition:background-color .15s var(--ease),transform .1s var(--ease)}
+.btn:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:#fff;color:var(--accent-ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--accent-bg)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* diálogo de confirmación */
+dialog{border:0;border-radius:var(--r-m);padding:0;max-width:min(560px,calc(100vw - 32px));box-shadow:0 24px 60px -20px rgba(15,42,92,.45)}
+dialog::backdrop{background:rgba(15,42,92,.45)}
+.dlg{padding:24px}
+.dlg h2{font-size:1.6rem;margin-bottom:8px}
+.dlg p{margin:.4rem 0;color:var(--ink-2)}
+.pend{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;padding:0;list-style:none}
+.pend a{display:inline-block;min-width:40px;text-align:center;padding:.3rem .55rem;border-radius:var(--r-s);background:var(--warn-bg);color:var(--warn);font-weight:700;text-decoration:none;font-variant-numeric:tabular-nums}
+.pend a:hover{text-decoration:underline}
+.dlg-act{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end;margin-top:20px}
+
+/* informe */
+.grade{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+.score{font-family:var(--f-head);font-size:4.5rem;line-height:.9;color:var(--accent-ink);font-variant-numeric:tabular-nums}
+.score small{font-size:1.6rem;color:var(--muted)}
+.facts{display:grid;gap:4px;color:var(--ink-2)}
+.facts strong{color:var(--ink)}
+.status{border-radius:var(--r-s);padding:12px 16px;margin-top:16px}
+.status.ok{background:var(--ok-bg);color:var(--ok)}
+.status.warn{background:var(--warn-bg);color:var(--warn)}
+.status a{color:inherit;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+h2.sec{font-size:1.5rem;margin:28px 0 12px}
+.fail{border-left:4px solid var(--ko);background:var(--surface);border-radius:0 var(--r-m) var(--r-m) 0;padding:16px 20px;margin-bottom:12px}
+.fail p{margin:.3rem 0}
+.lab{font-weight:700}
+.yours{color:var(--ko)}
+.right{color:var(--ok)}
+.why{color:var(--ink-2);font-size:.95rem}
+.copy .opt{cursor:default}
+.copy .opt:hover{background:transparent}
+.copy .opt.is-right{border-color:var(--ok);background:var(--ok-bg)}
+.copy .opt.is-wrong{border-color:var(--ko);background:var(--ko-bg)}
+.tag{font-size:.85rem;font-weight:700;margin-left:6px}
+.note{font-size:.9rem;color:var(--muted)}
+.print-only{display:none}
+
+@media (max-width:640px){
+  .form{grid-template-columns:1fr}
+  .q,.panel{padding:16px}
+  .grade{grid-template-columns:1fr;gap:8px}
+  .bar-in{gap:12px}
+  .meter{width:96px}
+  .btn{padding:.55rem 1rem}
+}
+@media print{
+  body{background:#fff;font-size:11pt}
+  .top{background:#fff;color:var(--ink);border-bottom:2px solid var(--ink)}
+  .top small,.top p{color:var(--ink-2)}
+  .bar,.actions,.status,.no-print,dialog{display:none!important}
+  .print-only{display:block}
+  .q,.fail,.panel{break-inside:avoid;border-color:#999}
+  .wrap{padding:0}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <small>MPCDPD (1786) Competencia digital para la práctica docente</small>
+  <h1>Evaluación final del módulo</h1>
+  <p id="sub">25 preguntas de opción múltiple sobre los seis resultados de aprendizaje. Solo se puede corregir una vez.</p>
+</div></header>
+<main class="wrap" id="app"></main>
+<script>
+const EXAM = {"key": "mpcdpd1786-evaluacion-final-v1", "teacher": "jpons@centredelamar.com", "endpoint": "https://script.google.com/macros/s/AKfycbwriOdhlZx8AcyGnIQSsBm1M7uM2hLYHNw7bLmC7q9tF0YQIVBtjgr851LfQGYMejha/exec", "questions": [{"q": "Según el marco DigCompEdu, ¿qué área agrupa el uso de tecnologías digitales para la comunicación y la participación en la vida organizativa del centro?", "opts": ["Empoderamiento de los discentes.", "Compromiso profesional.", "Enseñanza y aprendizaje.", "Evaluación."], "ans": 1, "exp": "El compromiso profesional es el área de DigCompEdu que agrupa el uso de tecnologías digitales para la comunicación, la colaboración y la participación en la vida organizativa del centro."}, {"q": "¿Cuál de las siguientes constituye una norma básica de etiqueta digital en la comunicación institucional?", "opts": ["Emplear un registro informal en cualquier circunstancia.", "Responder a los mensajes sin plazo determinado.", "Revisar cuidadosamente el contenido antes de su envío o publicación.", "Evitar el uso de canales corporativos en favor de canales personales."], "ans": 2, "exp": "Entre las normas de etiqueta digital explicadas se cita expresamente la revisión cuidadosa del contenido antes de su envío o publicación; el resto de opciones describe justamente las conductas contrarias a dichas normas."}, {"q": "La investigación-acción aplicada a la práctica digital docente se caracteriza principalmente por:", "opts": ["Desarrollarse exclusivamente en el ámbito de la investigación académica.", "Excluir la observación de los efectos de las intervenciones realizadas.", "Ser un proceso ajeno a la práctica cotidiana del aula.", "Constituir un ciclo sistemático orientado a la mejora de la propia práctica."], "ans": 3, "exp": "La investigación-acción se define como un ciclo sistemático de observación, planificación, actuación y evaluación orientado a la mejora de la propia práctica, y no como un proceso ajeno a ella ni exclusivo del ámbito académico."}, {"q": "La curación de contenidos digitales se define como:", "opts": ["El proceso de filtrar, seleccionar y organizar información aportando valor añadido mediante criterio experto.", "La simple acumulación de enlaces sin evaluación previa.", "Un proceso exclusivamente automatizado sin intervención humana.", "La eliminación sistemática de contenidos digitales obsoletos."], "ans": 0, "exp": "La curación de contenidos se define como el proceso de filtrar, seleccionar, organizar y compartir información aportando valor añadido mediante contextualización y criterio experto, frente a la simple acumulación de enlaces."}, {"q": "Entre los criterios de selección de recursos digitales, ¿cuál de los siguientes se considera un criterio técnico?", "opts": ["La coherencia con los objetivos de aprendizaje.", "La actualidad y el rigor de las fuentes.", "La compatibilidad con los dispositivos y plataformas del centro.", "La capacidad de favorecer la participación activa del alumnado."], "ans": 2, "exp": "La compatibilidad con dispositivos y plataformas es el ejemplo explícito de criterio técnico; la coherencia con los objetivos de aprendizaje es un criterio didáctico, y la actualidad y el rigor de las fuentes es un criterio científico."}, {"q": "El acto de poner a disposición del público copias de una obra mediante venta, alquiler o préstamo se denomina, en materia de propiedad intelectual:", "opts": ["Reproducción.", "Comunicación pública.", "Distribución.", "Transformación."], "ans": 2, "exp": "La distribución se define como la puesta a disposición del público de copias del original mediante venta, alquiler o préstamo, distinguiéndose de la reproducción (realización de copias) y de la comunicación pública (acceso sin distribución previa de ejemplares)."}, {"q": "Una obra cuyos derechos de explotación económica han expirado por el transcurso del plazo legal se considera:", "opts": ["De licencia Creative Commons.", "De dominio público.", "De uso restringido.", "De titularidad compartida."], "ans": 1, "exp": "Las obras cuyos derechos de explotación económica han expirado por el transcurso del plazo legal se consideran de dominio público, y pueden emplearse libremente sin autorización."}, {"q": "En el modelo TPACK, la intersección entre conocimiento tecnológico y conocimiento pedagógico da lugar a:", "opts": ["El conocimiento pedagógico del contenido.", "El conocimiento tecnológico del contenido.", "El conocimiento tecnológico pedagógico.", "El conocimiento tecnológico pedagógico del contenido."], "ans": 2, "exp": "De la combinación entre conocimiento tecnológico y conocimiento pedagógico surge el conocimiento tecnológico pedagógico, distinto de la intersección con el contenido."}, {"q": "Antes de emplear un recurso digital en el aula, el docente debe, entre otras acciones:", "opts": ["Confiar en que funcionará sin necesidad de comprobación previa.", "Prescindir de cualquier alternativa ante posibles fallos técnicos.", "Delegar la comprobación técnica en el alumnado.", "Revisar su funcionamiento y prever alternativas ante contingencias."], "ans": 3, "exp": "El manual exige revisar el funcionamiento de los recursos con antelación y prever alternativas ante contingencias, frente a confiar sin comprobación, prescindir de alternativas o delegar la comprobación en el alumnado."}, {"q": "Las wikis, como herramienta de aprendizaje colaborativo, se caracterizan por:", "opts": ["Estar diseñadas exclusivamente para el trabajo individual.", "Permitir la construcción conjunta y progresiva de documentos por varios autores.", "No permitir el seguimiento de las aportaciones de cada participante.", "Sustituir cualquier entorno virtual de aprendizaje."], "ans": 1, "exp": "Las wikis se definen como herramientas que permiten la construcción conjunta y progresiva de documentos por parte de varios autores, con seguimiento de las aportaciones individuales."}, {"q": "Las estrategias de aprendizaje autorregulado apoyadas en tecnologías digitales tienen como finalidad principal:", "opts": ["Aumentar la dependencia del alumnado respecto a la supervisión docente.", "Desarrollar habilidades metacognitivas y capacidad de autonomía.", "Reducir la implicación del alumnado en la planificación de su estudio.", "Sustituir la evaluación formativa realizada por el docente."], "ans": 1, "exp": "Las estrategias de aprendizaje autorregulado se vinculan al desarrollo de habilidades metacognitivas y de la capacidad de autonomía del alumnado, no a aumentar su dependencia del docente."}, {"q": "Los instrumentos digitales como los murales colaborativos o los portafolios digitales se emplean principalmente en:", "opts": ["La evaluación diagnóstica.", "La evaluación formativa.", "La evaluación sumativa.", "La evaluación externa del centro."], "ans": 1, "exp": "Los murales digitales, portafolios digitales y rúbricas en entorno virtual se presentan como instrumentos propios de la evaluación formativa, desarrollada de manera continuada a lo largo del proceso."}, {"q": "El uso de herramientas de inteligencia artificial en el tratamiento de datos evaluativos exige del docente:", "opts": ["Aceptar sin reservas cualquier conclusión generada automáticamente.", "Delegar en la herramienta la responsabilidad última de las decisiones evaluativas.", "Contrastar los resultados obtenidos con su propio criterio pedagógico.", "Prescindir de cualquier análisis posterior de las evidencias digitales."], "ans": 2, "exp": "Cualquier conclusión obtenida mediante inteligencia artificial debe contrastarse siempre con el criterio pedagógico del docente, que conserva la responsabilidad última de las decisiones evaluativas."}, {"q": "Ante un problema técnico durante una prueba de evaluación digital, el equipo docente debe, ante todo:", "opts": ["Ignorar la incidencia si afecta solo a una parte del grupo.", "Anticipar contingencias y coordinar criterios comunes entre el profesorado implicado.", "Trasladar la resolución exclusivamente al departamento de informática.", "Repetir la prueba a todo el grupo sin valorar la incidencia concreta."], "ans": 1, "exp": "La resolución eficaz de problemas técnicos exige anticipación y coordinación de criterios comunes entre el profesorado que evalúa a un mismo grupo, no la simple derivación del problema o su ignorancia."}, {"q": "La retroalimentación digital eficaz se caracteriza, entre otros rasgos, por ser:", "opts": ["Genérica y aplicable por igual a cualquier alumno.", "Ofrecida sin plazo determinado tras la tarea.", "Oportuna, específica y orientada a la mejora.", "Centrada exclusivamente en la calificación numérica."], "ans": 2, "exp": "La retroalimentación digital eficaz se define como oportuna, específica y orientada a la mejora, frente a la genérica, sin plazo o centrada solo en la calificación."}, {"q": "La protección del acceso a la información evaluativa almacenada digitalmente exige, entre otras medidas:", "opts": ["El uso compartido de una única contraseña para todo el equipo docente.", "El almacenamiento en dispositivos personales no autorizados por el centro.", "La limitación del acceso al personal docente que lo necesita para sus funciones.", "La publicación abierta de los resultados para mayor transparencia."], "ans": 2, "exp": "La protección de la información evaluativa exige limitar el acceso al personal docente que la necesita para sus funciones, no compartir contraseñas, almacenar en dispositivos no autorizados ni publicar resultados abiertamente."}, {"q": "La accesibilidad cognitiva de un recurso digital hace referencia principalmente a:", "opts": ["La compatibilidad exclusiva con lectores de pantalla.", "La comprensibilidad de contenidos e interfaces para distintas capacidades de procesamiento.", "La disponibilidad de periféricos adaptados para la interacción física.", "La existencia de subtítulos en materiales audiovisuales."], "ans": 1, "exp": "La accesibilidad cognitiva se refiere a la comprensibilidad de contenidos e interfaces para personas con distintas capacidades de procesamiento de la información, a diferencia de la accesibilidad física o sensorial."}, {"q": "La denominada brecha digital de segundo nivel se refiere fundamentalmente a:", "opts": ["La falta de acceso material a dispositivos y conexión a internet.", "La ausencia total de infraestructura tecnológica en los centros.", "Un fenómeno limitado exclusivamente al ámbito rural.", "Las diferencias en competencias y en el uso significativo de la tecnología."], "ans": 3, "exp": "La brecha digital de segundo nivel se define como la diferencia en competencias y en el uso significativo de la tecnología, distinta de la brecha de primer nivel, referida al acceso material."}, {"q": "Los itinerarios formativos digitales se caracterizan por:", "opts": ["Obligar a todo el alumnado a seguir idéntica secuencia de contenidos.", "Establecer secuencias de aprendizaje flexibles adaptadas al ritmo de cada alumno.", "Eliminar la posibilidad de actividades de refuerzo o ampliación.", "Sustituir por completo la evaluación diagnóstica inicial."], "ans": 1, "exp": "Los itinerarios formativos digitales se definen como secuencias de aprendizaje flexibles adaptadas al ritmo de cada alumno, lo contrario de imponer una secuencia idéntica para todos."}, {"q": "¿Cuál de las siguientes se considera una competencia transversal especialmente favorecida por simulaciones y entornos de análisis de datos?", "opts": ["La memorización literal de contenidos.", "La resolución de problemas.", "La reproducción mecánica de procedimientos.", "La evaluación sumativa exclusivamente."], "ans": 1, "exp": "La resolución de problemas se cita expresamente como una de las competencias transversales especialmente favorecidas por simulaciones y entornos de análisis de datos."}, {"q": "La gamificación aplicada a la práctica docente consiste en:", "opts": ["Sustituir por completo los objetivos de aprendizaje por elementos lúdicos.", "Limitar el uso de tecnologías digitales exclusivamente al ocio del alumnado.", "Incorporar elementos propios del diseño de juegos para aumentar la implicación del alumnado.", "Eliminar cualquier forma de progresión o retroalimentación visible."], "ans": 2, "exp": "La gamificación se define como la incorporación de elementos propios del diseño de juegos a contextos formativos para aumentar la implicación del alumnado, sin sustituir los objetivos de aprendizaje."}, {"q": "Los sistemas de inteligencia artificial generativa plantean, entre otros riesgos:", "opts": ["La imposibilidad total de generar contenidos falsos de apariencia realista.", "La ausencia completa de sesgos en sus resultados.", "La generación de información inexacta presentada con apariencia de seguridad.", "La eliminación automática de cualquier sesgo presente en los datos de entrenamiento."], "ans": 2, "exp": "Entre los riesgos de la inteligencia artificial generativa se señala la generación de información inexacta presentada con apariencia de seguridad y coherencia."}, {"q": "El denominado sesgo de confirmación consiste en:", "opts": ["Otorgar mayor credibilidad a la información que confirma las propias creencias previas.", "Valorar con igual rigor cualquier fuente consultada, con independencia de su origen.", "Aplicar sistemáticamente la técnica de lectura lateral ante cualquier información.", "Descartar por sistema cualquier información coincidente con las propias expectativas."], "ans": 0, "exp": "El sesgo de confirmación se define como la tendencia a otorgar mayor credibilidad a la información que confirma las creencias previas de una persona."}, {"q": "La técnica de la lectura lateral consiste en:", "opts": ["Analizar exclusivamente el contenido de la página que se está consultando.", "Abandonar temporalmente la fuente consultada para contrastarla en fuentes externas independientes.", "Confiar en la reputación aparente del formato visual de una página web.", "Limitarse a comprobar la fecha de publicación de un contenido."], "ans": 1, "exp": "La lectura lateral consiste en abandonar temporalmente la fuente consultada para buscar en otras fuentes independientes información sobre su fiabilidad."}, {"q": "Entre las buenas prácticas de organización y seguridad de la información digital se encuentra:", "opts": ["Mantener indefinidamente toda la información recopilada, sin plazos de conservación.", "Compartir los permisos de acceso a los archivos sin restricción alguna.", "Realizar copias de seguridad periódicas y eliminar de forma segura la información innecesaria.", "Evitar cualquier sistema de organización o nomenclatura de archivos."], "ans": 2, "exp": "Entre las buenas prácticas de organización y seguridad se citan la realización periódica de copias de seguridad y la eliminación segura de la información que ya no resulte necesaria."}]};
+const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.6"/></svg>';
+const L = "abcd";
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function load() { try { return JSON.parse(localStorage.getItem(EXAM.key)) || {}; } catch (e) { return {}; } }
+function save(st) { try { localStorage.setItem(EXAM.key, JSON.stringify(st)); } catch (e) { /* sin almacenamiento: la prueba sigue funcionando en esta pestaña */ } }
+let S = load();
+S.answers = S.answers || {};
+
+function render() { S.done ? renderReport() : renderExam(); }
+
+/* ---------- examen ---------- */
+function renderExam() {
+  const app = $("#app");
+  app.innerHTML =
+    '<section class="panel" aria-labelledby="h-ins"><h2 id="h-ins" class="vh">Instrucciones</h2><ul class="rules">' +
+    ['Cada pregunta tiene una única respuesta correcta. Las preguntas sin responder cuentan como fallo.',
+     'Antes de corregir, la web te avisa de las preguntas que te faltan.',
+     'Una vez corregida, la prueba queda cerrada en este navegador y no se puede repetir.',
+     'Al terminar se genera tu informe con la nota sobre 10, las preguntas falladas con su respuesta correcta y una copia del examen.']
+      .map(t => '<li>' + ICON + '<span>' + t + '</span></li>').join("") + '</ul>' +
+    '<div class="form"><div class="field"><label for="name">Nombre y apellidos <span class="req" aria-hidden="true">*</span></label><input id="name" autocomplete="name" required value="' + esc(S.name || "") + '"></div>' +
+    '<div class="field"><label for="group">Grupo <span class="req" aria-hidden="true">*</span></label><input id="group" required value="' + esc(S.group || "") + '"></div></div></section>' +
+    EXAM.questions.map((q, i) =>
+      '<fieldset class="q" id="q' + (i + 1) + '"><legend><span class="qn">Pregunta ' + (i + 1) + ' de ' + EXAM.questions.length + '</span><span class="qt">' + esc(q.q) + '</span></legend>' +
+      q.opts.map((o, k) => '<label class="opt"><input type="radio" name="q' + i + '" value="' + k + '"' + (S.answers[i] === k ? " checked" : "") + '><span>' + L[k] + ') ' + esc(o) + '</span></label>').join("") +
+      '</fieldset>').join("") +
+    '<div class="bar"><div class="bar-in"><div><span class="count" id="count"></span><div class="meter" aria-hidden="true"><i id="meter"></i></div></div>' +
+    '<button type="button" class="btn" id="submit">Corregir y entregar</button></div></div>' +
+    '<dialog id="dlg" aria-labelledby="dlg-h"></dialog>';
+  app.addEventListener("change", e => {
+    if (e.target.name && e.target.name[0] === "q") {
+      S.answers[+e.target.name.slice(1)] = +e.target.value;
+      e.target.closest(".q").classList.remove("pending-mark");
+      save(S); count();
+    }
+  });
+  ["name", "group"].forEach(id => $("#" + id).addEventListener("input", e => { S[id] = e.target.value; save(S); }));
+  $("#submit").addEventListener("click", ask);
+  count();
+}
+function pending() { return EXAM.questions.map((_, i) => i).filter(i => S.answers[i] === undefined); }
+function count() {
+  const n = EXAM.questions.length, d = n - pending().length;
+  $("#count").innerHTML = '<strong>' + d + '</strong> de ' + n + ' respondidas';
+  $("#meter").style.width = (d * 100 / n) + "%";
+}
+function ask() {
+  const dlg = $("#dlg");
+  if (!(S.name || "").trim() || !(S.group || "").trim()) {
+    dlg.innerHTML = '<div class="dlg"><h2 id="dlg-h">Falta tu identificación</h2><p>Escribe tu nombre y apellidos y tu grupo: aparecen en el informe que recibe el docente.</p>' +
+      '<div class="dlg-act"><button type="button" class="btn" id="d-ok">Escribirlos</button></div></div>';
+    dlg.showModal();
+    $("#d-ok").onclick = () => { dlg.close(); const f = !(S.name || "").trim() ? "#name" : "#group"; $(f).scrollIntoView({ block: "center" }); $(f).focus(); };
+    return;
+  }
+  const p = pending();
+  dlg.innerHTML = p.length
+    ? '<div class="dlg"><h2 id="dlg-h">Te faltan ' + p.length + (p.length === 1 ? ' pregunta' : ' preguntas') + '</h2>' +
+      '<p>Si corriges ahora, contarán como fallo y no podrás volver a hacer la prueba. Preguntas sin responder:</p>' +
+      '<ul class="pend">' + p.map(i => '<li><a href="#q' + (i + 1) + '" data-q="' + (i + 1) + '">' + (i + 1) + '</a></li>').join("") + '</ul>' +
+      '<div class="dlg-act"><button type="button" class="btn ghost" id="d-go">Corregir igualmente</button><button type="button" class="btn" id="d-back">Seguir respondiendo</button></div></div>'
+    : '<div class="dlg"><h2 id="dlg-h">¿Corregir y entregar?</h2><p>Has respondido las ' + EXAM.questions.length + ' preguntas. Una vez corregida, la prueba queda cerrada y no se puede repetir.</p>' +
+      '<div class="dlg-act"><button type="button" class="btn ghost" id="d-back">Revisar respuestas</button><button type="button" class="btn" id="d-go">Corregir y entregar</button></div></div>';
+  dlg.showModal();
+  $("#d-back").onclick = () => {
+    dlg.close();
+    if (p.length) { p.forEach(i => $("#q" + (i + 1)).classList.add("pending-mark")); const f = $("#q" + (p[0] + 1)); f.scrollIntoView({ block: "start" }); f.querySelector("input").focus(); }
+  };
+  $("#d-go").onclick = () => { dlg.close(); grade(); };
+  dlg.querySelectorAll("[data-q]").forEach(a => a.onclick = e => {
+    e.preventDefault(); dlg.close();
+    p.forEach(i => $("#q" + (i + 1)).classList.add("pending-mark"));
+    const f = $("#q" + a.dataset.q); f.scrollIntoView({ block: "start" }); f.querySelector("input").focus();
+  });
+}
+function grade() {
+  const n = EXAM.questions.length;
+  const ok = EXAM.questions.filter((q, i) => S.answers[i] === q.ans).length;
+  S.done = true;
+  S.ok = ok;
+  S.score = Math.round(ok * 1000 / n) / 100;
+  S.when = new Date().toISOString();
+  save(S);
+  window.scrollTo(0, 0);
+  renderReport();
+  send();
+}
+
+/* ---------- informe ---------- */
+const fmt = x => x.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function when() { return new Date(S.when).toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }); }
+function failsOf() { return EXAM.questions.map((q, i) => ({ q, i, a: S.answers[i] })).filter(x => x.a !== x.q.ans); }
+function reportHTML() {
+  const n = EXAM.questions.length, fails = failsOf();
+  return '<section class="panel"><div class="grade"><div class="score" aria-label="Nota: ' + fmt(S.score) + ' sobre 10">' + fmt(S.score) + '<small> / 10</small></div>' +
+    '<div class="facts"><span><strong>' + esc(S.name) + '</strong> · Grupo ' + esc(S.group) + '</span>' +
+    '<span>' + S.ok + ' aciertos de ' + n + ' · ' + (n - S.ok) + ' fallos o sin responder</span>' +
+    '<span>Corregida el ' + esc(when()) + '</span></div></div>' +
+    '<p class="note">Nota = aciertos ÷ ' + n + ' × 10. Las preguntas sin responder cuentan como fallo.</p>' +
+    '<div class="status no-print" id="status" role="status"></div>' +
+    '<div class="actions no-print"><button type="button" class="btn" id="pdf">Guardar en PDF o imprimir</button>' +
+    '<a class="btn ghost" id="mail" href="#">Abrir un correo al docente</a></div></section>' +
+    '<h2 class="sec">' + (fails.length ? 'Preguntas falladas (' + fails.length + ')' : 'Sin fallos') + '</h2>' +
+    (fails.length ? fails.map(x =>
+      '<div class="fail"><p class="lab">' + (x.i + 1) + '. ' + esc(x.q.q) + '</p>' +
+      '<p class="yours">Tu respuesta: ' + (x.a === undefined ? 'sin responder' : L[x.a] + ') ' + esc(x.q.opts[x.a])) + '</p>' +
+      '<p class="right">Respuesta correcta: ' + L[x.q.ans] + ') ' + esc(x.q.opts[x.q.ans]) + '</p>' +
+      '<p class="why">' + esc(x.q.exp) + '</p></div>').join("") : '<p>Has respondido correctamente las ' + n + ' preguntas.</p>') +
+    '<h2 class="sec">Copia del examen</h2><div class="copy">' +
+    EXAM.questions.map((q, i) => '<div class="q"><span class="qn">Pregunta ' + (i + 1) + (S.answers[i] === q.ans ? ' · <span class="right">acierto</span>' : ' · <span class="yours">' + (S.answers[i] === undefined ? 'sin responder' : 'fallo') + '</span>') + '</span><span class="qt">' + esc(q.q) + '</span>' +
+      q.opts.map((o, k) => '<div class="opt' + (k === q.ans ? ' is-right' : (k === S.answers[i] ? ' is-wrong' : '')) + '"><span>' + (k === S.answers[i] ? '●' : '○') + '</span><span>' + L[k] + ') ' + esc(o) +
+        (k === S.answers[i] ? '<span class="tag">tu respuesta</span>' : '') + (k === q.ans ? '<span class="tag right">correcta</span>' : '') + '</span></div>').join("") + '</div>').join("") +
+    '</div>';
+}
+function pdfDoc() {
+  const css = "body{font-family:Arial,sans-serif;font-size:11pt;color:#0f2a5c}.no-print{display:none}.score{font-size:28pt;font-weight:bold}" +
+    ".fail{border-left:4px solid #b42318;padding:6px 10px;margin:8px 0}.yours{color:#b42318}.right{color:#1b7343}.lab{font-weight:bold}" +
+    ".q{margin:10px 0;page-break-inside:avoid}.qn,.qt{display:block}.qt{font-weight:bold}.opt{margin:2px 0;padding:2px 6px}.is-right{background:#e6f4ec}.is-wrong{background:#fdecea}.tag{font-weight:bold;margin-left:6px}";
+  return '<!doctype html><html lang="es"><head><meta charset="utf-8"><style>' + css + '</style></head><body><h1>Evaluación final · MPCDPD (1786)</h1>' + reportHTML() + '</body></html>';
+}
+function summaryText() {
+  const fails = failsOf();
+  return "Evaluación final MPCDPD (1786)\n" + S.name + " · Grupo " + S.group + "\nCorregida el " + when() +
+    "\nNota: " + fmt(S.score) + " / 10 (" + S.ok + " de " + EXAM.questions.length + " aciertos)\n\n" +
+    (fails.length ? "Preguntas falladas:\n" + fails.map(x => (x.i + 1) + ". Respuesta: " + (x.a === undefined ? "sin responder" : L[x.a]) + " · Correcta: " + L[x.q.ans]).join("\n") : "Sin fallos.") +
+    "\n\nAdjunto el informe en PDF.";
+}
+function renderReport() {
+  $("#sub").textContent = "Prueba corregida. Este es tu informe: guárdalo en PDF y entrégalo al docente.";
+  $("#app").innerHTML = reportHTML();
+  $("#pdf").onclick = () => window.print();
+  $("#mail").href = "mailto:" + EXAM.teacher + "?subject=" + encodeURIComponent("Evaluación final MPCDPD 1786 · " + S.name + " · " + S.group) + "&body=" + encodeURIComponent(summaryText());
+  status();
+}
+function status() {
+  const el = $("#status");
+  if (S.sent) { el.className = "status ok no-print"; el.textContent = "Informe enviado automáticamente al docente (" + EXAM.teacher + ")."; return; }
+  el.className = "status warn no-print";
+  el.innerHTML = EXAM.endpoint && S.sendError
+    ? 'No se ha podido enviar el informe automáticamente. Guárdalo en PDF y envíalo a <a href="mailto:' + EXAM.teacher + '">' + EXAM.teacher + '</a>.'
+    : EXAM.endpoint ? 'Enviando el informe al docente…'
+    : 'Guarda el informe en PDF y envíalo al docente: <a href="mailto:' + EXAM.teacher + '">' + EXAM.teacher + '</a>. El botón de correo prepara el mensaje; adjunta el PDF antes de enviarlo.';
+}
+async function send() {
+  if (!EXAM.endpoint || S.sent) return;
+  status();
+  try {
+    const r = await fetch(EXAM.endpoint, { method: "POST", body: JSON.stringify({
+      modulo: "MPCDPD 1786", nombre: S.name, grupo: S.group, fecha: S.when, nota: S.score, aciertos: S.ok, total: EXAM.questions.length,
+      resumen: summaryText(), html: pdfDoc() }) });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "respuesta no válida");
+    S.sent = true; S.sendError = false;
+  } catch (e) { S.sendError = true; }
+  save(S); status();
+}
+window.addEventListener("load", () => { if (S.done && EXAM.endpoint && !S.sent) send(); });
+render();
+</script>
+</body>
+</html>
